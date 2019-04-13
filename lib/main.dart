@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_movie_playground/models/movieModel.dart';
 import 'package:flutter_movie_playground/screens/MovieDetails.dart';
@@ -13,6 +12,9 @@ var changeHeaderCallback;
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
+
+
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -25,16 +27,35 @@ class MyApp extends StatelessWidget {
             });
             break;
           case RouteNames.MOVIE_LIST:
-            return MaterialPageRoute(builder: (context) {
-              MovieListPageArgs movie = settings.arguments;
-              return movieListPage(movie_name: movie.movie_name);
-            });
+            MovieListPageArgs movie = settings.arguments;
+            return PageRouteBuilder<Null>(
+                pageBuilder: (BuildContext context, Animation<double> animation,
+                    Animation<double> secondaryAnimation) {
+                  return AnimatedBuilder(
+                      animation: animation,
+                      builder: (BuildContext context, Widget child) {
+                        return Opacity(
+                          opacity: animation.value,
+                          child: movieListPage(movie_name: movie.movie_name),
+                        );
+                      });
+                },
+                transitionDuration: Duration(milliseconds: 1600));
             break;
           case RouteNames.MOVIE_DETAILS:
-            return MaterialPageRoute(builder: (context) {
-              //MovieListPageArgs movie = settings.arguments;
-              return MovieDetailsPage();
-            });
+            Movie movie = settings.arguments;
+            return PageRouteBuilder<Null>(
+                pageBuilder: (BuildContext context, Animation<double> animation,
+                    Animation<double> secondaryAnimation) {
+                  return SlideTransition(position: Tween<Offset>(
+                      begin: const Offset(1.0, 0.0),
+                      end: Offset.zero
+                  ).animate(animation),child: MovieDetailsPage(movie),);
+                },
+                transitionDuration: Duration(milliseconds: 800));
+            /*return MaterialPageRoute(builder: (context) {
+              return MovieDetailsPage(movie);
+            });*/
             break;
         }
       },
