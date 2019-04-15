@@ -4,40 +4,70 @@ import 'dart:ui';
 import 'package:async/async.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_movie_playground/models/movieModel.dart';
+import 'package:flutter_movie_playground/scopedModels/AppState.dart';
 import 'package:flutter_movie_playground/services/services.dart';
 import 'package:flutter_movie_playground/utils/Constants.dart';
 import 'package:flutter_advanced_networkimage/provider.dart';
-
-var movie_searched_name;
-
-class movieListPage extends StatefulWidget {
-  movieListPage({this.movie_name});
-
-  var movie_name;
-
-  @override
-  State createState() => movieListPageState();
-}
+import 'package:scoped_model/scoped_model.dart';
 
 class movieListPageState extends State<movieListPage> {
-  var name;
-  var page;
-  var search_box;
+  final controller = TextEditingController();
+  SearchResultPageState model;
 
   @override
   void initState() {
-    // TODO: implement initState
+    model = SearchResultPageState(widget.movie_name);
     super.initState();
-    name = widget.movie_name;
-    page = _buildList();
   }
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(child: page);
+    //list_model = ScopedModel.of<SearchResultPageState>(context);
+    return ScopedModel(
+        model: model,
+        child: ScopedModelDescendant<SearchResultPageState>(
+          builder: (context, child, model) {
+            return SafeArea(child: _buildList(context));
+          },
+        ));
   }
 
-  Widget _buildHeader() {
+  Widget _buildList(BuildContext context) {
+    return ScopedModel(
+        model: ScopedModel.of<SearchResultPageState>(context).movieListState,
+        child: ScopedModelDescendant<MovieListState>(
+          builder: (context, child, model) {
+            if (model.movies != null && model.movies.length > 1) {
+              return Stack(
+                children: <Widget>[
+                  movieBackgroundWidget(movie: model.movies[0]),
+                  Column(
+                    children: <Widget>[
+                      Hero(tag: 'search', child: _buildHeader(context)),
+                      Expanded(child: movieListWidget(model))
+                    ],
+                  ),
+                ],
+              );
+            } else {
+              return Scaffold(
+                body: Column(
+                  children: <Widget>[
+                    Hero(tag: 'search', child: _buildHeader(context)),
+                    Center(
+                      child: CircularProgressIndicator(
+                        backgroundColor: Colors.transparent,
+                      ),
+                    )
+                  ],
+                ),
+              );
+            }
+          },
+        ));
+  }
+
+  Widget _buildHeader(BuildContext context) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
       child: Material(
@@ -55,6 +85,7 @@ class movieListPageState extends State<movieListPage> {
             children: [
               Flexible(
                 child: TextField(
+                  controller: controller,
                   decoration: InputDecoration(
                     hintStyle: TextStyle(
                       color: Color.fromRGBO(211, 214, 195, 100),
@@ -67,21 +98,16 @@ class movieListPageState extends State<movieListPage> {
                     hintText: "Movie Name",
                   ),
                   onSubmitted: (text) {
-                    setState(() {
-                      page = _buildList();
-                    });
-                  },
-                  onChanged: (movie) {
-                    name = movie;
+                    ScopedModel.of<SearchResultPageState>(context)
+                        .updateMovieSearch(text);
                   },
                 ),
               ),
               IconButton(
                 icon: Icon(Icons.search),
                 onPressed: () {
-                  setState(() {
-                    page = _buildList();
-                  });
+                  ScopedModel.of<SearchResultPageState>(context)
+                      .updateMovieSearch(controller.text);
                 },
               ),
               IconButton(
@@ -96,80 +122,28 @@ class movieListPageState extends State<movieListPage> {
       ),
     );
   }
-
-  Widget _buildList() {
-    return FutureBuilder<MovieSearchResponseV2>(
-      future: getMoviesv2(name),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting ||
-            snapshot.connectionState != ConnectionState.done) {
-          return Scaffold(
-            body: Column(
-              children: <Widget>[
-                Hero(tag: 'search', child: _buildHeader()),
-                Center(
-                  child: CircularProgressIndicator(
-                    backgroundColor: Colors.transparent,
-                  ),
-                )
-              ],
-            ),
-          );
-        } else {
-          return Stack(
-            children: <Widget>[
-              movieBackgroundWidget(response: snapshot.data),
-              Column(
-                children: <Widget>[
-                  Hero(tag: 'search', child: _buildHeader()),
-                  Expanded(child: movieListWidget(response: snapshot.data))
-                ],
-              ),
-            ],
-          );
-        }
-      },
-    );
-  }
 }
 
-class movieListWidget extends StatefulWidget {
-  movieListWidget({Key key, this.response}) : super(key: key);
+class movieListPage extends StatefulWidget {
+  movieListPage(this.movie_name);
 
-  final MovieSearchResponseV2 response;
+  var movie_name;
 
   @override
-  State createState() => movieListState();
+  State createState() => movieListPageState();
 }
 
-enum MovieLoadMoreStatus { LOADING, STABLE }
+class movieListWidget extends StatelessWidget {
+  movieListWidget(this.listModel);
 
-class movieListState extends State<movieListWidget> {
-  List<Movie> movies;
-  int currentPageNumber;
-  int totalPages;
+  MovieListState listModel;
   ScrollController controller = new ScrollController();
   MovieLoadMoreStatus status = MovieLoadMoreStatus.STABLE;
   CancelableOperation movieOperation;
 
   @override
-  void initState() {
-    currentPageNumber = widget.response.page;
-    totalPages = widget.response.totalPages;
-    movies = widget.response.results;
-  }
-
-  @override
-  void dispose() {
-    controller.dispose();
-    if (movieOperation != null) {
-      movieOperation.cancel();
-    }
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    listModel = ScopedModel.of<MovieListState>(context);
     return NotificationListener(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.end,
@@ -182,9 +156,9 @@ class movieListState extends State<movieListWidget> {
                   mainAxisSpacing: 15,
                   crossAxisSpacing: 10),
               padding: EdgeInsets.only(bottom: 10, top: 20),
-              itemCount: movies.length,
+              itemCount: listModel.movies.length,
               itemBuilder: (context, index) {
-                return movieListItem(movies[index]);
+                return movieListItem(listModel.movies[index]);
               },
               scrollDirection: Axis.vertical,
               controller: controller,
@@ -196,7 +170,7 @@ class movieListState extends State<movieListWidget> {
               height: 50,
               child: CircularProgressIndicator(),
             ),
-            visible: status == MovieLoadMoreStatus.LOADING,
+            visible: listModel.showLoader,
           ),
         ],
       ),
@@ -208,24 +182,7 @@ class movieListState extends State<movieListWidget> {
     if (notification is ScrollUpdateNotification) {
       if (controller.position.maxScrollExtent > controller.offset &&
           controller.position.maxScrollExtent - controller.offset <= 50) {
-        if (status != null && status == MovieLoadMoreStatus.STABLE) {
-          if (currentPageNumber < totalPages) {
-            setState(() {
-              status = MovieLoadMoreStatus.LOADING;
-            });
-            movieOperation = CancelableOperation.fromFuture(getMoviesv2(
-                    movie_searched_name,
-                    currentPageNumber: currentPageNumber + 1)
-                .then((object) {
-              setState(() {
-                status = MovieLoadMoreStatus.STABLE;
-                print('got new results movies');
-                currentPageNumber = object.page;
-                movies.addAll(object.results);
-              });
-            }));
-          }
-        }
+        listModel.scrolledToEnd();
       }
     }
   }
@@ -264,44 +221,50 @@ Widget myListItem(String imageUrl, String title, double height) {
   return Container(
     margin: EdgeInsets.only(right: 10),
     height: height,
-    child: AspectRatio(aspectRatio: 0.7,child: Card(
-      elevation: 20,
-      clipBehavior: Clip.antiAlias,
-      color: Colors.transparent.withOpacity(0.1),
-      shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(10))),
-      child: imageUrl != null
-          ? FadeInImage(
-        placeholder: AssetImage('images/placeholder.png'),
-        image: AdvancedNetworkImage(ApiBaseUrls.TMDB_IMAGE + imageUrl,
-            scale: 0.85,
-            useDiskCache: true,
-            cacheRule: CacheRule(maxAge: Duration(days: 5)),
-            retryLimit: 3,
-            printError: true,
-            retryDuration: Duration(seconds: 3)),fit: BoxFit.fitWidth,)
-          : Container(
-        decoration: BoxDecoration(
-            image: DecorationImage(
-                image: ExactAssetImage('images/placeholder.png'),fit: BoxFit.fitWidth)),
-        child: Center(
-          child: Text(
-            title,
-            style: TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.w400,
-                letterSpacing: 6),
-          ),
-        ),
+    child: AspectRatio(
+      aspectRatio: 0.7,
+      child: Card(
+        elevation: 20,
+        clipBehavior: Clip.antiAlias,
+        color: Colors.transparent.withOpacity(0.1),
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(10))),
+        child: imageUrl != null
+            ? FadeInImage(
+                placeholder: AssetImage('images/placeholder.png'),
+                image: AdvancedNetworkImage(ApiBaseUrls.TMDB_IMAGE + imageUrl,
+                    scale: 0.85,
+                    useDiskCache: true,
+                    cacheRule: CacheRule(maxAge: Duration(days: 5)),
+                    retryLimit: 3,
+                    printError: true,
+                    retryDuration: Duration(seconds: 3)),
+                fit: BoxFit.fitWidth,
+              )
+            : Container(
+                decoration: BoxDecoration(
+                    image: DecorationImage(
+                        image: ExactAssetImage('images/placeholder.png'),
+                        fit: BoxFit.fitWidth)),
+                child: Center(
+                  child: Text(
+                    title,
+                    style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w400,
+                        letterSpacing: 6),
+                  ),
+                ),
+              ),
       ),
-    ),),
+    ),
   );
 }
 
 class movieBackgroundWidget extends StatelessWidget {
-  const movieBackgroundWidget({Key key, this.response}) : super(key: key);
+  const movieBackgroundWidget({Key key, this.movie}) : super(key: key);
 
-  final MovieSearchResponseV2 response;
+  final Movie movie;
 
   @override
   Widget build(BuildContext context) {
@@ -314,9 +277,8 @@ class movieBackgroundWidget extends StatelessWidget {
                   decoration: new BoxDecoration(
                       image: new DecorationImage(
                           image: NetworkImage(
-                              !response.results[0].posterPath.contains('N/A')
-                                  ? ApiBaseUrls.TMDB_IMAGE +
-                                      response.results[0].posterPath
+                              !movie.posterPath.contains('N/A')
+                                  ? ApiBaseUrls.TMDB_IMAGE + movie.posterPath
                                   : 'https://m.media-amazon.com/images/M/MV5BNDYxNjQyMjAtNTdiOS00NGYwLWFmNTAtNThmYjU5ZGI2YTI1XkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_SX300.jpg',
                               scale: 0.5),
                           fit: BoxFit.cover)),
