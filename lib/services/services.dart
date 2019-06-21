@@ -2,6 +2,7 @@
 import 'dart:convert';
 
 import 'package:flutter_movie_playground/models/movieModel.dart';
+import 'package:flutter_movie_playground/models/responseModels.dart';
 import 'package:flutter_movie_playground/utils/Constants.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_movie_playground/utils/NetworkUtil.dart';
@@ -30,7 +31,9 @@ Future<MovieSearchResponseV2> getMoviesv2(String name,{int currentPageNumber = 1
 }
 
 Future<MovieDetailResponse> getMovieDetail(int movieId) async{
-  var response = await getDio(ApiBaseUrls.TMDB).get("/movie/$movieId");
+  var response = await getDio(ApiBaseUrls.TMDB).get("/movie/$movieId",queryParameters: {
+  "append_to_response" : "videos,images,casts"
+  });
   return MovieDetailResponse.fromJson(response.data);
 }
 

@@ -1,5 +1,7 @@
 import 'package:async/async.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_movie_playground/models/movieModel.dart';
+import 'package:flutter_movie_playground/models/responseModels.dart';
 import 'package:flutter_movie_playground/services/services.dart';
 import 'package:scoped_model/scoped_model.dart';
 
@@ -7,7 +9,8 @@ class GlobalAppState extends Model {}
 
 class SearchPageState extends Model {}
 
-class SearchResultPageState extends Model {
+class SearchResultPageState extends ChangeNotifier {
+
   SearchResultPageState(this._search_term) {
     movieListState = MovieListState(search_term);
     fetchMoviesForSearchTerm();
@@ -32,10 +35,11 @@ class SearchResultPageState extends Model {
     movieListState.currentPageNumber = response.page;
     movieListState.totalPages = response.totalPages;
     movieListState.addMovies(response.results);
+    notifyListeners();
   }
 }
 
-class MovieListState extends Model {
+class MovieListState extends ChangeNotifier {
   MovieListState(this.search_term,{this.movies, this.currentPageNumber, this.totalPages});
 
   List<Movie> movies = List();
@@ -85,6 +89,24 @@ class MovieListState extends Model {
   dispose() {
     movieOperation?.cancel();
   }
+}
+
+
+class MovieDetailPageModel extends ChangeNotifier {
+
+  Movie movie;
+  MovieDetailResponse movieDetail;
+
+  MovieDetailPageModel(this.movie){
+    fetchMovieDetail();
+  }
+
+
+  fetchMovieDetail() async {
+    movieDetail = await getMovieDetail(movie.id).then((response) => response);
+    notifyListeners();
+  }
+
 }
 
 enum MovieLoadMoreStatus { LOADING, STABLE }

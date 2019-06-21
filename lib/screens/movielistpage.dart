@@ -8,7 +8,7 @@ import 'package:flutter_movie_playground/scopedModels/AppState.dart';
 import 'package:flutter_movie_playground/services/services.dart';
 import 'package:flutter_movie_playground/utils/Constants.dart';
 import 'package:flutter_advanced_networkimage/provider.dart';
-import 'package:scoped_model/scoped_model.dart';
+import 'package:provider/provider.dart';
 
 class movieListPageState extends State<movieListPage> {
   final controller = TextEditingController();
@@ -23,48 +23,45 @@ class movieListPageState extends State<movieListPage> {
   @override
   Widget build(BuildContext context) {
     //list_model = ScopedModel.of<SearchResultPageState>(context);
-    return ScopedModel(
-        model: model,
-        child: ScopedModelDescendant<SearchResultPageState>(
-          builder: (context, child, model) {
-            return SafeArea(child: _buildList(context));
-          },
-        ));
+    return ChangeNotifierProvider<SearchResultPageState>(
+        builder: (_) => model ,
+        child: SafeArea(child: _buildList(context))
+    );
   }
 
   Widget _buildList(BuildContext context) {
-    return ScopedModel(
-        model: ScopedModel.of<SearchResultPageState>(context).movieListState,
-        child: ScopedModelDescendant<MovieListState>(
-          builder: (context, child, model) {
-            if (model.movies != null && model.movies.length > 1) {
-              return Stack(
+    return Consumer<SearchResultPageState>(
+      builder: (context,searchmodel,_){
+        var model = searchmodel.movieListState;
+        if (model.movies != null && model.movies.length > 1) {
+          return Stack(
+            children: <Widget>[
+              movieBackgroundWidget(movie: model.movies[0]),
+              Column(
                 children: <Widget>[
-                  movieBackgroundWidget(movie: model.movies[0]),
-                  Column(
-                    children: <Widget>[
-                      Hero(tag: 'search', child: _buildHeader(context)),
-                      Expanded(child: movieListWidget(model))
-                    ],
-                  ),
+                  Hero(tag: 'search', child: _buildHeader(context)),
+                  Expanded(child: movieListWidget(model))
                 ],
-              );
-            } else {
-              return Scaffold(
-                body: Column(
-                  children: <Widget>[
-                    Hero(tag: 'search', child: _buildHeader(context)),
-                    Center(
-                      child: CircularProgressIndicator(
-                        backgroundColor: Colors.transparent,
-                      ),
-                    )
-                  ],
-                ),
-              );
-            }
-          },
-        ));
+              ),
+            ],
+          );
+        } else {
+          return Scaffold(
+            body: Column(
+              children: <Widget>[
+                Hero(tag: 'search', child: _buildHeader(context)),
+                Center(
+                  child: CircularProgressIndicator(
+                    backgroundColor: Colors.transparent,
+                  ),
+                )
+              ],
+            ),
+          );
+        }
+      },
+    );
+
   }
 
   Widget _buildHeader(BuildContext context) {
@@ -98,7 +95,7 @@ class movieListPageState extends State<movieListPage> {
                     hintText: "Movie Name",
                   ),
                   onSubmitted: (text) {
-                    ScopedModel.of<SearchResultPageState>(context)
+                    Provider.of<SearchResultPageState>(context)
                         .updateMovieSearch(text);
                   },
                 ),
@@ -106,7 +103,7 @@ class movieListPageState extends State<movieListPage> {
               IconButton(
                 icon: Icon(Icons.search),
                 onPressed: () {
-                  ScopedModel.of<SearchResultPageState>(context)
+                  Provider.of<SearchResultPageState>(context)
                       .updateMovieSearch(controller.text);
                 },
               ),
@@ -143,7 +140,7 @@ class movieListWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    listModel = ScopedModel.of<MovieListState>(context);
+    listModel = Provider.of<SearchResultPageState>(context).movieListState;
     return NotificationListener(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.end,

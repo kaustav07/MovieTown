@@ -25,8 +25,9 @@ dependencies:
   random_color: ^1.0.3
   flutter_advanced_networkimage: any
   dio: 2.1.0
-  youtube_player: ^0.6.0
   scoped_model: ^1.0.1
+  url_launcher: ^5.0.2
+  provider: ^3.0.0+1
 
 dev_dependencies:
   flutter_test:

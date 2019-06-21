@@ -41,254 +41,6 @@ class MovieListPageArgs {
   MovieListPageArgs({this.movie_name});
 }
 
-MovieDetailResponse movieDetailResponseFromJson(String str) {
-  final jsonData = json.decode(str);
-  return MovieDetailResponse.fromJson(jsonData);
-}
-
-String movieDetailResponseToJson(MovieDetailResponse data) {
-  final dyn = data.toJson();
-  return json.encode(dyn);
-}
-
-class MovieDetailResponse {
-  bool adult;
-  String backdropPath;
-  dynamic belongsToCollection;
-  int budget;
-  List<Genre> genres;
-  String homepage;
-  int id;
-  String imdbId;
-  String originalLanguage;
-  String originalTitle;
-  String overview;
-  double popularity;
-  String posterPath;
-  List<ProductionCompany> productionCompanies;
-  List<ProductionCountry> productionCountries;
-  String releaseDate;
-  int revenue;
-  int runtime;
-  List<SpokenLanguage> spokenLanguages;
-  String status;
-  String tagline;
-  String title;
-  bool video;
-  double voteAverage;
-  int voteCount;
-
-  MovieDetailResponse({
-    this.adult,
-    this.backdropPath,
-    this.belongsToCollection,
-    this.budget,
-    this.genres,
-    this.homepage,
-    this.id,
-    this.imdbId,
-    this.originalLanguage,
-    this.originalTitle,
-    this.overview,
-    this.popularity,
-    this.posterPath,
-    this.productionCompanies,
-    this.productionCountries,
-    this.releaseDate,
-    this.revenue,
-    this.runtime,
-    this.spokenLanguages,
-    this.status,
-    this.tagline,
-    this.title,
-    this.video,
-    this.voteAverage,
-    this.voteCount,
-  });
-
-  factory MovieDetailResponse.fromJson(Map<String, dynamic> json) => new MovieDetailResponse(
-    adult: json["adult"] == null ? null : json["adult"],
-    backdropPath: json["backdrop_path"] == null ? null : json["backdrop_path"],
-    belongsToCollection: json["belongs_to_collection"],
-    budget: json["budget"] == null ? null : json["budget"],
-    genres: json["genres"] == null ? null : new List<Genre>.from(json["genres"].map((x) => Genre.fromJson(x))),
-    homepage: json["homepage"] == null ? null : json["homepage"],
-    id: json["id"] == null ? null : json["id"],
-    imdbId: json["imdb_id"] == null ? null : json["imdb_id"],
-    originalLanguage: json["original_language"] == null ? null : json["original_language"],
-    originalTitle: json["original_title"] == null ? null : json["original_title"],
-    overview: json["overview"] == null ? null : json["overview"],
-    popularity: json["popularity"] == null ? null : json["popularity"].toDouble(),
-    posterPath: json["poster_path"] == null ? null : json["poster_path"],
-    productionCompanies: json["production_companies"] == null ? null : new List<ProductionCompany>.from(json["production_companies"].map((x) => ProductionCompany.fromJson(x))),
-    productionCountries: json["production_countries"] == null ? null : new List<ProductionCountry>.from(json["production_countries"].map((x) => ProductionCountry.fromJson(x))),
-    releaseDate: json["release_date"] == null ? null : json["release_date"],
-    revenue: json["revenue"] == null ? null : json["revenue"],
-    runtime: json["runtime"] == null ? null : json["runtime"],
-    spokenLanguages: json["spoken_languages"] == null ? null : new List<SpokenLanguage>.from(json["spoken_languages"].map((x) => SpokenLanguage.fromJson(x))),
-    status: json["status"] == null ? null : json["status"],
-    tagline: json["tagline"] == null ? null : json["tagline"],
-    title: json["title"] == null ? null : json["title"],
-    video: json["video"] == null ? null : json["video"],
-    voteAverage: json["vote_average"] == null ? null : json["vote_average"].toDouble(),
-    voteCount: json["vote_count"] == null ? null : json["vote_count"],
-  );
-
-  Map<String, dynamic> toJson() => {
-    "adult": adult == null ? null : adult,
-    "backdrop_path": backdropPath == null ? null : backdropPath,
-    "belongs_to_collection": belongsToCollection,
-    "budget": budget == null ? null : budget,
-    "genres": genres == null ? null : new List<dynamic>.from(genres.map((x) => x.toJson())),
-    "homepage": homepage == null ? null : homepage,
-    "id": id == null ? null : id,
-    "imdb_id": imdbId == null ? null : imdbId,
-    "original_language": originalLanguage == null ? null : originalLanguage,
-    "original_title": originalTitle == null ? null : originalTitle,
-    "overview": overview == null ? null : overview,
-    "popularity": popularity == null ? null : popularity,
-    "poster_path": posterPath == null ? null : posterPath,
-    "production_companies": productionCompanies == null ? null : new List<dynamic>.from(productionCompanies.map((x) => x.toJson())),
-    "production_countries": productionCountries == null ? null : new List<dynamic>.from(productionCountries.map((x) => x.toJson())),
-    "release_date": releaseDate == null ? null : releaseDate,
-    "revenue": revenue == null ? null : revenue,
-    "runtime": runtime == null ? null : runtime,
-    "spoken_languages": spokenLanguages == null ? null : new List<dynamic>.from(spokenLanguages.map((x) => x.toJson())),
-    "status": status == null ? null : status,
-    "tagline": tagline == null ? null : tagline,
-    "title": title == null ? null : title,
-    "video": video == null ? null : video,
-    "vote_average": voteAverage == null ? null : voteAverage,
-    "vote_count": voteCount == null ? null : voteCount,
-  };
-}
-
-class Genre {
-  int id;
-  String name;
-
-  Genre({
-    this.id,
-    this.name,
-  });
-
-  factory Genre.fromJson(Map<String, dynamic> json) => new Genre(
-    id: json["id"] == null ? null : json["id"],
-    name: json["name"] == null ? null : json["name"],
-  );
-
-  Map<String, dynamic> toJson() => {
-    "id": id == null ? null : id,
-    "name": name == null ? null : name,
-  };
-}
-
-class ProductionCompany {
-  int id;
-  String logoPath;
-  String name;
-  String originCountry;
-
-  ProductionCompany({
-    this.id,
-    this.logoPath,
-    this.name,
-    this.originCountry,
-  });
-
-  factory ProductionCompany.fromJson(Map<String, dynamic> json) => new ProductionCompany(
-    id: json["id"] == null ? null : json["id"],
-    logoPath: json["logo_path"] == null ? null : json["logo_path"],
-    name: json["name"] == null ? null : json["name"],
-    originCountry: json["origin_country"] == null ? null : json["origin_country"],
-  );
-
-  Map<String, dynamic> toJson() => {
-    "id": id == null ? null : id,
-    "logo_path": logoPath == null ? null : logoPath,
-    "name": name == null ? null : name,
-    "origin_country": originCountry == null ? null : originCountry,
-  };
-}
-
-class ProductionCountry {
-  String iso31661;
-  String name;
-
-  ProductionCountry({
-    this.iso31661,
-    this.name,
-  });
-
-  factory ProductionCountry.fromJson(Map<String, dynamic> json) => new ProductionCountry(
-    iso31661: json["iso_3166_1"] == null ? null : json["iso_3166_1"],
-    name: json["name"] == null ? null : json["name"],
-  );
-
-  Map<String, dynamic> toJson() => {
-    "iso_3166_1": iso31661 == null ? null : iso31661,
-    "name": name == null ? null : name,
-  };
-}
-
-class SpokenLanguage {
-  String iso6391;
-  String name;
-
-  SpokenLanguage({
-    this.iso6391,
-    this.name,
-  });
-
-  factory SpokenLanguage.fromJson(Map<String, dynamic> json) => new SpokenLanguage(
-    iso6391: json["iso_639_1"] == null ? null : json["iso_639_1"],
-    name: json["name"] == null ? null : json["name"],
-  );
-
-  Map<String, dynamic> toJson() => {
-    "iso_639_1": iso6391 == null ? null : iso6391,
-    "name": name == null ? null : name,
-  };
-}
-
-MovieSearchResponseV2 movieSearchResponseV2FromJson(String str) {
-  final jsonData = json.decode(str);
-  return MovieSearchResponseV2.fromJson(jsonData);
-}
-
-String movieSearchResponseV2ToJson(MovieSearchResponseV2 data) {
-  final dyn = data.toJson();
-  return json.encode(dyn);
-}
-
-class MovieSearchResponseV2 {
-  int page;
-  List<Movie> results;
-  int totalResults;
-  int totalPages;
-
-  MovieSearchResponseV2({
-    this.page,
-    this.results,
-    this.totalResults,
-    this.totalPages,
-  });
-
-  factory MovieSearchResponseV2.fromJson(Map<String, dynamic> json) => new MovieSearchResponseV2(
-    page: json["page"] == null ? null : json["page"],
-    results: json["results"] == null ? null : new List<Movie>.from(json["results"].map((x) => Movie.fromJson(x))),
-    totalResults: json["total_results"] == null ? null : json["total_results"],
-    totalPages: json["total_pages"] == null ? null : json["total_pages"],
-  );
-
-  Map<String, dynamic> toJson() => {
-    "page": page == null ? null : page,
-    "results": results == null ? null : new List<dynamic>.from(results.map((x) => x.toJson())),
-    "total_results": totalResults == null ? null : totalResults,
-    "total_pages": totalPages == null ? null : totalPages,
-  };
-}
-
 class Movie {
   String posterPath;
   bool adult;
@@ -378,6 +130,335 @@ class EnumValues<T> {
     return reverseMap;
   }
 }
+
+class Casts {
+  List<Cast> cast;
+  List<Crew> crew;
+
+  Casts({
+    this.cast,
+    this.crew,
+  });
+
+  factory Casts.fromJson(Map<String, dynamic> json) => new Casts(
+    cast: json["cast"] == null ? null : new List<Cast>.from(json["cast"].map((x) => Cast.fromJson(x))),
+    crew: json["crew"] == null ? null : new List<Crew>.from(json["crew"].map((x) => Crew.fromJson(x))),
+  );
+
+  Map<String, dynamic> toJson() => {
+    "cast": cast == null ? null : new List<dynamic>.from(cast.map((x) => x.toJson())),
+    "crew": crew == null ? null : new List<dynamic>.from(crew.map((x) => x.toJson())),
+  };
+}
+
+class Cast {
+  int castId;
+  String character;
+  String creditId;
+  int gender;
+  int id;
+  String name;
+  int order;
+  String profilePath;
+
+  Cast({
+    this.castId,
+    this.character,
+    this.creditId,
+    this.gender,
+    this.id,
+    this.name,
+    this.order,
+    this.profilePath,
+  });
+
+  factory Cast.fromJson(Map<String, dynamic> json) => new Cast(
+    castId: json["cast_id"] == null ? null : json["cast_id"],
+    character: json["character"] == null ? null : json["character"],
+    creditId: json["credit_id"] == null ? null : json["credit_id"],
+    gender: json["gender"] == null ? null : json["gender"],
+    id: json["id"] == null ? null : json["id"],
+    name: json["name"] == null ? null : json["name"],
+    order: json["order"] == null ? null : json["order"],
+    profilePath: json["profile_path"] == null ? null : json["profile_path"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "cast_id": castId == null ? null : castId,
+    "character": character == null ? null : character,
+    "credit_id": creditId == null ? null : creditId,
+    "gender": gender == null ? null : gender,
+    "id": id == null ? null : id,
+    "name": name == null ? null : name,
+    "order": order == null ? null : order,
+    "profile_path": profilePath == null ? null : profilePath,
+  };
+}
+
+class Crew {
+  String creditId;
+  Department department;
+  int gender;
+  int id;
+  String job;
+  String name;
+  String profilePath;
+
+  Crew({
+    this.creditId,
+    this.department,
+    this.gender,
+    this.id,
+    this.job,
+    this.name,
+    this.profilePath,
+  });
+
+  factory Crew.fromJson(Map<String, dynamic> json) => new Crew(
+    creditId: json["credit_id"] == null ? null : json["credit_id"],
+    department: json["department"] == null ? null : departmentValues.map[json["department"]],
+    gender: json["gender"] == null ? null : json["gender"],
+    id: json["id"] == null ? null : json["id"],
+    job: json["job"] == null ? null : json["job"],
+    name: json["name"] == null ? null : json["name"],
+    profilePath: json["profile_path"] == null ? null : json["profile_path"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "credit_id": creditId == null ? null : creditId,
+    "department": department == null ? null : departmentValues.reverse[department],
+    "gender": gender == null ? null : gender,
+    "id": id == null ? null : id,
+    "job": job == null ? null : job,
+    "name": name == null ? null : name,
+    "profile_path": profilePath == null ? null : profilePath,
+  };
+}
+
+enum Department { ART, EDITING, DIRECTING, PRODUCTION, CAMERA, SOUND, WRITING, COSTUME_MAKE_UP, CREW, VISUAL_EFFECTS, LIGHTING }
+
+final departmentValues = new EnumValues({
+  "Art": Department.ART,
+  "Camera": Department.CAMERA,
+  "Costume & Make-Up": Department.COSTUME_MAKE_UP,
+  "Crew": Department.CREW,
+  "Directing": Department.DIRECTING,
+  "Editing": Department.EDITING,
+  "Lighting": Department.LIGHTING,
+  "Production": Department.PRODUCTION,
+  "Sound": Department.SOUND,
+  "Visual Effects": Department.VISUAL_EFFECTS,
+  "Writing": Department.WRITING
+});
+
+class Genre {
+  int id;
+  String name;
+
+  Genre({
+    this.id,
+    this.name,
+  });
+
+  factory Genre.fromJson(Map<String, dynamic> json) => new Genre(
+    id: json["id"] == null ? null : json["id"],
+    name: json["name"] == null ? null : json["name"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "id": id == null ? null : id,
+    "name": name == null ? null : name,
+  };
+}
+
+class Images {
+  List<Backdrop> backdrops;
+  List<Backdrop> posters;
+
+  Images({
+    this.backdrops,
+    this.posters,
+  });
+
+  factory Images.fromJson(Map<String, dynamic> json) => new Images(
+    backdrops: json["backdrops"] == null ? null : new List<Backdrop>.from(json["backdrops"].map((x) => Backdrop.fromJson(x))),
+    posters: json["posters"] == null ? null : new List<Backdrop>.from(json["posters"].map((x) => Backdrop.fromJson(x))),
+  );
+
+  Map<String, dynamic> toJson() => {
+    "backdrops": backdrops == null ? null : new List<dynamic>.from(backdrops.map((x) => x.toJson())),
+    "posters": posters == null ? null : new List<dynamic>.from(posters.map((x) => x.toJson())),
+  };
+}
+
+class Backdrop {
+  double aspectRatio;
+  String filePath;
+  int height;
+  String iso6391;
+  double voteAverage;
+  int voteCount;
+  int width;
+
+  Backdrop({
+    this.aspectRatio,
+    this.filePath,
+    this.height,
+    this.iso6391,
+    this.voteAverage,
+    this.voteCount,
+    this.width,
+  });
+
+  factory Backdrop.fromJson(Map<String, dynamic> json) => new Backdrop(
+    aspectRatio: json["aspect_ratio"] == null ? null : json["aspect_ratio"].toDouble(),
+    filePath: json["file_path"] == null ? null : json["file_path"],
+    height: json["height"] == null ? null : json["height"],
+    iso6391: json["iso_639_1"] == null ? null : json["iso_639_1"],
+    voteAverage: json["vote_average"] == null ? null : json["vote_average"].toDouble(),
+    voteCount: json["vote_count"] == null ? null : json["vote_count"],
+    width: json["width"] == null ? null : json["width"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "aspect_ratio": aspectRatio == null ? null : aspectRatio,
+    "file_path": filePath == null ? null : filePath,
+    "height": height == null ? null : height,
+    "iso_639_1": iso6391 == null ? null : iso6391,
+    "vote_average": voteAverage == null ? null : voteAverage,
+    "vote_count": voteCount == null ? null : voteCount,
+    "width": width == null ? null : width,
+  };
+}
+
+class ProductionCompany {
+  int id;
+  String logoPath;
+  String name;
+  String originCountry;
+
+  ProductionCompany({
+    this.id,
+    this.logoPath,
+    this.name,
+    this.originCountry,
+  });
+
+  factory ProductionCompany.fromJson(Map<String, dynamic> json) => new ProductionCompany(
+    id: json["id"] == null ? null : json["id"],
+    logoPath: json["logo_path"] == null ? null : json["logo_path"],
+    name: json["name"] == null ? null : json["name"],
+    originCountry: json["origin_country"] == null ? null : json["origin_country"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "id": id == null ? null : id,
+    "logo_path": logoPath == null ? null : logoPath,
+    "name": name == null ? null : name,
+    "origin_country": originCountry == null ? null : originCountry,
+  };
+}
+
+class ProductionCountry {
+  String iso31661;
+  String name;
+
+  ProductionCountry({
+    this.iso31661,
+    this.name,
+  });
+
+  factory ProductionCountry.fromJson(Map<String, dynamic> json) => new ProductionCountry(
+    iso31661: json["iso_3166_1"] == null ? null : json["iso_3166_1"],
+    name: json["name"] == null ? null : json["name"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "iso_3166_1": iso31661 == null ? null : iso31661,
+    "name": name == null ? null : name,
+  };
+}
+
+class SpokenLanguage {
+  String iso6391;
+  String name;
+
+  SpokenLanguage({
+    this.iso6391,
+    this.name,
+  });
+
+  factory SpokenLanguage.fromJson(Map<String, dynamic> json) => new SpokenLanguage(
+    iso6391: json["iso_639_1"] == null ? null : json["iso_639_1"],
+    name: json["name"] == null ? null : json["name"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "iso_639_1": iso6391 == null ? null : iso6391,
+    "name": name == null ? null : name,
+  };
+}
+
+class Videos {
+  List<Result> results;
+
+  Videos({
+    this.results,
+  });
+
+  factory Videos.fromJson(Map<String, dynamic> json) => new Videos(
+    results: json["results"] == null ? null : new List<Result>.from(json["results"].map((x) => Result.fromJson(x))),
+  );
+
+  Map<String, dynamic> toJson() => {
+    "results": results == null ? null : new List<dynamic>.from(results.map((x) => x.toJson())),
+  };
+}
+
+class Result {
+  String id;
+  String iso6391;
+  String iso31661;
+  String key;
+  String name;
+  String site;
+  int size;
+  String type;
+
+  Result({
+    this.id,
+    this.iso6391,
+    this.iso31661,
+    this.key,
+    this.name,
+    this.site,
+    this.size,
+    this.type,
+  });
+
+  factory Result.fromJson(Map<String, dynamic> json) => new Result(
+    id: json["id"] == null ? null : json["id"],
+    iso6391: json["iso_639_1"] == null ? null : json["iso_639_1"],
+    iso31661: json["iso_3166_1"] == null ? null : json["iso_3166_1"],
+    key: json["key"] == null ? null : json["key"],
+    name: json["name"] == null ? null : json["name"],
+    site: json["site"] == null ? null : json["site"],
+    size: json["size"] == null ? null : json["size"],
+    type: json["type"] == null ? null : json["type"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "id": id == null ? null : id,
+    "iso_639_1": iso6391 == null ? null : iso6391,
+    "iso_3166_1": iso31661 == null ? null : iso31661,
+    "key": key == null ? null : key,
+    "name": name == null ? null : name,
+    "site": site == null ? null : site,
+    "size": size == null ? null : size,
+    "type": type == null ? null : type,
+  };
+}
+
 
 
 
